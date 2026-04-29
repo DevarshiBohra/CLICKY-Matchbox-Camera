@@ -438,5 +438,6 @@ Check the button wiring — one leg to GPIO 3, the other to GND.
 | Partition scheme | Minimal SPIFFS — two 1.875 MB OTA app slots |
 
 ## Project images
+
  
 *A photo is forever.*
