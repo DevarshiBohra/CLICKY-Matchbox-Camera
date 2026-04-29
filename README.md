@@ -389,35 +389,36 @@ Here is the complete workflow for pushing a code change without a cable:
  
 ## Troubleshooting
  
-**Display shows nothing / stays black**
+**1) Display shows nothing / stays black**
  
 Check your `User_Setup.h` pin definitions in the TFT_eSPI library. The most common cause is the CS, DC, or RST pins being wrong. Also confirm your wiring matches exactly.
  
-**"Camera FAILED!" on screen at boot**
+**2) Camera FAILED!" on screen at boot**
  
 The camera failed to initialise. This can happen if the board loses power during a previous frame capture. Press the RST button to restart. If it persists, check that the camera ribbon cable on the AI Thinker module is fully seated.
  
-**SD card not detected during capture**
+**3) SD card not detected during capture**
  
 Make sure the SD card is FAT32 formatted and is 4 GB or smaller. ExFAT and NTFS are not supported. Try reformatting the card using the official SD Card Formatter tool from sdcard.org.
  
-**WiFi network "CLICKY" does not appear**
+**4) WiFi network "CLICKY" does not appear**
  
 Confirm the board has fully booted (display shows WiFi mode screen). The AP can take a few seconds to appear after the board starts.
  
-**OTA page asks for password but won't accept it**
+**5) OTA page asks for password but won't accept it**
  
 Make sure you are typing the credentials exactly as defined in the source code (`OTA_USERNAME` and `OTA_PASSWORD`). Some browsers cache a failed login — try an incognito/private window.
  
-**OTA upload fails halfway**
+**6) OTA upload fails halfway**
  
 The `.bin` file may be too large for the partition scheme you selected. Confirm you are using "Minimal SPIFFS (1.9MB APP with OTA)" and that the sketch size is under 1.9 MB (check the output panel in Arduino IDE after compiling).
  
-**Photos are all black or very dark**
+**7) Photos are all black or very dark**
  
 This can happen if auto-exposure has not had time to adjust when the capture is triggered. The code already discards two warm-up frames before saving. If it persists, try capturing in better lighting.
  
-**Button does nothing**
+**8) Button does nothing**
+
 Check the button wiring — one leg to GPIO 3, the other to GND.
  
 ---
