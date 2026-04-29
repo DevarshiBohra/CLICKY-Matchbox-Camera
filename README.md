@@ -29,8 +29,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 - [OTA update workflow](#ota-update-workflow)
 - [Troubleshooting](#troubleshooting)
 - [Technical details](#technical-details)
-- [Project structure](#project-structure)
-- [Credits](#credits)
+- [Final Project Images](#project-images)
 ---
  
 ## What it does
@@ -51,17 +50,14 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
  
 | Part | Notes |
 |---|---|
-| ESP32-CAM (AI Thinker) | The main board — includes the OV2640 camera |
+| ESP32-CAM (AI Thinker) | The main board — includes the OV2640/OV3660 camera |
 | FTDI USB-to-Serial adapter (3.3 V) | Only needed for the very first flash |
-| ST7735 TFT display (160×128) | Small colour screen for the viewfinder |
-| MicroSD card | FAT32 formatted, 32 GB or smaller recommended |
+| 0.96 inch ST7735 TFT display (160×128) | Small colour screen for the viewfinder |
+| MicroSD card | FAT32 formatted, 4 GB or smaller recommended |
 | Tactile push button | Momentary normally-open button |
-| 10 kΩ resistor | Pull-up for the button (if not using internal pull-up) |
-| Jumper wires | Male-to-female or male-to-male depending on your setup |
-| Breadboard or custom PCB | For assembling everything |
+| Jumper wires | Male-to-female or male-to-male depending on your setup (Just for prototyping) |
+| Breadboard | For assembling everything (Just for prototyping) |
 | 5 V power supply (≥ 500 mA) | USB power bank works perfectly |
- 
-> **Note:** The AI Thinker ESP32-CAM does not have a built-in USB port. You need the FTDI adapter only once, for the initial flash. After that, all updates happen wirelessly over OTA.
  
 ---
  
@@ -69,18 +65,18 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
  
 ### ESP32-CAM → TFT Display (ST7735)
  
-The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them.
+The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them. As the SD card and display share the same pins, only one of them can be active at any given point. Due to this, video recording is not feasible, as it requires continuous data storage on the SD card and an active display for real-time preview.
  
 | TFT Pin | ESP32-CAM GPIO | Notes |
 |---|---|---|
 | VCC | 3.3 V | |
 | GND | GND | |
-| SCL (CLK) | GPIO 14 | SPI clock |
+| SCL (CLK) | GPIO 4 | SPI clock |
 | SDA (MOSI) | GPIO 13 | SPI data |
-| RES (RESET) | GPIO 15 | Display reset |
+| RES (RESET) | GPIO -1 | Display reset |
 | DC (A0) | GPIO 2 | Data/command select |
 | CS | GPIO 12 | **TFT_CS — defined in code** |
-| BLK (backlight) | 3.3 V or GPIO | Tie to 3.3 V for always-on |
+| BLK (backlight) | 3.3 V | Tie to 3.3 V for always-on |
  
 > The pin numbers above must match your `User_Setup.h` file inside the TFT_eSPI library. See the Software Setup section for details.
  
@@ -91,7 +87,7 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
 | One leg | GPIO 3 (RX0) | Defined as `BUTTON_PIN` in code |
 | Other leg | GND | Internal pull-up is enabled in code |
  
-> GPIO 3 is the RX0 serial pin. It works fine as a button input when you are not actively using the Serial monitor. Once you have flashed the board and are done debugging, this is perfectly safe to use.
+> GPIO 3 is the RX0 serial pin, so we cannot use the serial monitor to send commands to the ESP32-CAM. However, we can still receive data from the ESP32-CAM on the serial monitor for debugging
  
 ### SD Card
  
@@ -104,6 +100,7 @@ The SD card is built into the AI Thinker ESP32-CAM module — you do not need to
 ### Step 1 — Install Arduino IDE
  
 Download and install Arduino IDE 2.x from [arduino.cc](https://www.arduino.cc/en/software).
+I have tested the code on Arduino IDE 2.3.6
  
 ### Step 2 — Add ESP32 board support
  
@@ -114,7 +111,8 @@ Download and install Arduino IDE 2.x from [arduino.cc](https://www.arduino.cc/en
    ```
 3. Click OK
 4. Go to **Tools → Board → Boards Manager**
-5. Search for `esp32` and install the package by **Espressif Systems** (version 2.x recommended)
+5. Search for `esp32` and install the package by **Espressif Systems** (version 3.x recommended). I have tested the code on version 3.3.8
+
 ### Step 3 — Select the correct board
  
 Go to **Tools → Board → ESP32 Arduino** and select:
@@ -155,10 +153,10 @@ Other board settings to check:
  
 Go to **Tools → Manage Libraries** and install each of these:
  
-| Library | Author | What it does |
+| Library | Author | What it does | 
 |---|---|---|
-| TFT_eSPI | Bodmer | Drives the ST7735 TFT display |
-| esp32-camera | Espressif | Camera driver (usually included with ESP32 board package) |
+| TFT_eSPI | Bodmer | Drives the ST7735 TFT display (version 2.5.43) | 
+| esp32-camera | Espressif | Camera driver (usually included with ESP32 board package) | 
  
 The following are part of the ESP32 Arduino core and do not need separate installation:
  
@@ -182,20 +180,28 @@ After installing TFT_eSPI you must edit its configuration file, otherwise the di
    ```cpp
    #define ST7735_DRIVER
    ```
-4. Set the pin definitions to match the wiring table above:
+4. Set the colour order as:
    ```cpp
-   #define TFT_CS   12
-   #define TFT_DC    2
-   #define TFT_RST  15
-   #define TFT_MOSI 13
-   #define TFT_SCLK 14
+   #define TFT_RGB_ORDER TFT_BGR
    ```
 5. Set the display dimensions:
    ```cpp
    #define TFT_WIDTH  128
    #define TFT_HEIGHT 160
    ```
-6. Save the file
+6. Set the type of display (If the below option does not work, try the others):
+   ```cpp
+   #define ST7735_REDTAB160x80
+   ```
+7. Set the pin definitions to match the wiring table above:
+   ```cpp
+   #define TFT_CS   12  // Chip Select
+   #define TFT_RST  -1  // Reset
+   #define TFT_DC   2   // Data/Command
+   #define TFT_MOSI 13  // SPI Data
+   #define TFT_SCLK 4  // SPI Clock
+   ```
+8. Save the file
 ---
  
 ## Flashing the firmware
@@ -224,7 +230,7 @@ To put the ESP32-CAM into flash mode, connect **GPIO 0 to GND** before powering 
 7. Wait for "Done uploading"
 8. Remove the GPIO 0 to GND jumper wire
 9. Press RST to restart the board normally
-The TFT should light up and show a live camera preview. You are done with the cable — from here everything is wireless.
+The TFT should light up and show a live camera preview.
  
 ---
  
@@ -236,15 +242,15 @@ As soon as the board starts, the TFT display shows a live viewfinder from the ca
  
 ### Taking a photo
  
-Press the button briefly (less than 3 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
+Press the button briefly (less than 3 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 5 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
  
 ### Grayscale mode
  
-CLICKY supports a hardware grayscale mode using the OV2640 camera sensor's built-in effect engine. This means the grayscale conversion happens inside the camera chip itself before the image is even processed — it costs nothing and works at full resolution.
+CLICKY supports a hardware grayscale mode using the OV2640/OV3660 camera sensor's built-in effect engine. This means the grayscale conversion happens inside the camera chip itself before the image is even processed — it costs nothing and works at full resolution.
  
 **To toggle grayscale on or off:**
  
-Press and hold the button until the progress bar on screen turns green (between 3 and 5 seconds), then release. The board will restart in the new mode.
+Press and hold the button until the progress bar on screen turns blue (between 3 and 5 seconds), then release. The board will restart in the new mode.
  
 - If you were in colour mode, it switches to grayscale
 - If you were in grayscale, it switches back to colour
@@ -254,7 +260,7 @@ When grayscale is active, the live preview on the TFT and all captured photos wi
  
 ### WiFi gallery mode
  
-Press and hold the button for 5 seconds or more (until the progress bar turns blue), then release. The board starts a WiFi access point.
+Press and hold the button for 5 seconds or more (until the progress bar turns green), then release. The board starts a WiFi access point.
  
 **To access your photos:**
  
@@ -272,6 +278,9 @@ Once in the gallery:
 - **Delete selected** — tick photos and tap "Delete selected" to remove them from the SD card
 - **Delete all** — removes every photo from the SD card in one go (asks for confirmation)
 - **Stop WiFi** — exits WiFi mode and restarts the board, returning to camera mode
+
+Note: On iOS devices, the gallery page may open automatically when connected to Wi-Fi, but the download feature might not work. In this case, close the gallery page, open a browser like Google Chrome, and manually enter the IP address mentioned above to download the images.
+
 ### OTA firmware update
  
 When in WiFi mode, you (and only you, with the password) can push new firmware wirelessly.
@@ -306,15 +315,15 @@ When you press and hold the button, a progress bar appears on the TFT screen. Th
  
 | Bar colour | Time range | Release action |
 |---|---|---|
-| White | 0 – 3 seconds | Capture photo |
-| Green | 3 – 5 seconds | Toggle grayscale |
-| Blue | 5+ seconds | Start WiFi mode |
+| Yellow | 0 – 3 seconds | Capture photo |
+| Blue | 3 – 5 seconds | Toggle grayscale |
+| Green | 5+ seconds | Start WiFi mode |
  
 The text label above the bar also updates:
  
-- **"Hold for toggle..."** — in the green zone, release here to toggle grayscale
-- **"Hold for WiFi..."** — in the blue zone, release here for WiFi mode
-If you release the button while the bar is still white (under 3 seconds), the photo is taken immediately.
+- **"Hold for toggle..."** — in the blue zone, release here to toggle grayscale
+- **"Hold for WiFi..."** — in the green zone, release here for WiFi mode
+If you release the button while the bar is still yellow (under 3 seconds), the photo is taken immediately.
  
 ---
  
@@ -338,7 +347,7 @@ The board scans for the lowest available number each time it captures, so there 
 The board uses 1 byte of EEPROM to store the active camera effect:
  
 - `0` = normal colour mode
-- `2` = grayscale mode (value `2` matches the OV2640 sensor's effect index)
+- `2` = grayscale mode (value `2` matches the OV2640/OV3660 sensor's effect index)
 Every time you toggle grayscale, the new value is written to EEPROM address 0. Every time the board boots, it reads this address and applies the effect before starting the preview. This means your preferred mode is always preserved even if the board loses power.
  
 ---
@@ -387,11 +396,11 @@ The camera failed to initialise. This can happen if the board loses power during
  
 **SD card not detected during capture**
  
-Make sure the SD card is FAT32 formatted and is 32 GB or smaller. ExFAT and NTFS are not supported. Try reformatting the card using the official SD Card Formatter tool from sdcard.org.
+Make sure the SD card is FAT32 formatted and is 4 GB or smaller. ExFAT and NTFS are not supported. Try reformatting the card using the official SD Card Formatter tool from sdcard.org.
  
 **WiFi network "CLICKY" does not appear**
  
-Confirm the board has fully booted (display shows WiFi mode screen). The AP can take a few seconds to appear after the board starts. If it still does not appear, open the serial monitor at 115200 baud and look for the "AP OK" message.
+Confirm the board has fully booted (display shows WiFi mode screen). The AP can take a few seconds to appear after the board starts.
  
 **OTA page asks for password but won't accept it**
  
@@ -406,8 +415,7 @@ The `.bin` file may be too large for the partition scheme you selected. Confirm 
 This can happen if auto-exposure has not had time to adjust when the capture is triggered. The code already discards two warm-up frames before saving. If it persists, try capturing in better lighting.
  
 **Button does nothing**
- 
-GPIO 3 is also the serial RX pin. If you have the serial monitor open, it can interfere. Close the serial monitor and try again. Also check the button wiring — one leg to GPIO 3, the other to GND.
+Check the button wiring — one leg to GPIO 3, the other to GND.
  
 ---
  
@@ -416,10 +424,10 @@ GPIO 3 is also the serial RX pin. If you have the serial monitor open, it can in
 | Property | Value |
 |---|---|
 | Microcontroller | ESP32-S (dual-core 240 MHz) |
-| Camera sensor | OV2640 |
+| Camera sensor | OV2640/OV3660 |
 | Preview resolution | QQVGA 160×120 RGB565 |
 | Capture resolution | UXGA 1600×1200 JPEG (with PSRAM), SVGA fallback |
-| Display | ST7735 160×128 TFT via SPI |
+| Display | 0.96 inch ST7735 160×128 TFT via SPI |
 | Storage | MicroSD via SD_MMC (1-bit mode) |
 | WiFi | 802.11 b/g/n, AP mode only |
 | AP IP address | 192.168.4.1 |
@@ -428,27 +436,7 @@ GPIO 3 is also the serial RX pin. If you have the serial monitor open, it can in
 | Flash size | 4 MB |
 | PSRAM | 4 MB (used for large frame buffers) |
 | Partition scheme | Minimal SPIFFS — two 1.875 MB OTA app slots |
- 
----
- 
-## Project structure
- 
-```
-clicky/
-├── esp32_cam_final_OTA.ino   ← Main sketch
-├── README.md                 ← This file
-└── build/
-    ├── esp32_cam_final_OTA.ino.bin           ← Flash this for OTA
-    ├── esp32_cam_final_OTA.ino.merged.bin    ← Full image for USB flash from scratch
-    └── esp32_cam_final_OTA.ino.bootloader.bin
-```
- 
----
- 
-Built with:
-- [Arduino ESP32 core](https://github.com/espressif/arduino-esp32) by Espressif Systems
-- [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) by Bodmer
-- [esp32-camera](https://github.com/espressif/esp32-camera) by Espressif Systems
----
+
+## Project images
  
 *A photo is forever.*
