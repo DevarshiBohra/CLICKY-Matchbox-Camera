@@ -57,7 +57,10 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 | Tactile push button | Momentary normally-open button |
 | Jumper wires | Male-to-female or male-to-male depending on your setup (Just for prototyping) |
 | Breadboard | For assembling everything (Just for prototyping) |
-| 5 V power supply (≥ 500 mA) | USB power bank works perfectly |
+| 1000 mah lipo battery | Not necessarily 1000 mah is required |
+| 5V 2A Step-Up Boost Converter with USB Charger | This project uses fm5324ga ic board and is recommended |
+| Switch | To turn the setup on and off | 
+| Blank/Prototyping PCBs | This project uses prototyping PCBs to make the casing; one can use MDF boards, cardboard, 3D printing, etc |
  
 ---
  
