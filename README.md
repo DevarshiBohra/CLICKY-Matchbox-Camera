@@ -69,8 +69,8 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
  
 | TFT Pin | ESP32-CAM GPIO | Notes |
 |---|---|---|
-| VCC | 3.3 V | |
-| GND | GND | |
+| VCC | 3.3 V | Power |
+| GND | GND | Power |
 | SCL (CLK) | GPIO 4 | SPI clock |
 | SDA (MOSI) | GPIO 13 | SPI data |
 | RES (RESET) | GPIO -1 | Display reset |
