@@ -45,7 +45,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 - [OTA update workflow](#ota-update-workflow)
 - [Troubleshooting](#troubleshooting)
 - [Technical details](#technical-details)
-- [Final Project Images](#project-images)
+- [Prototype and Final Project Images](#project-images)
 ---
  
 ## What it does
@@ -458,6 +458,23 @@ Check the button wiring — one leg to GPIO 3, the other to GND.
 | Partition scheme | Minimal SPIFFS — two 1.875 MB OTA app slots |
 
 ## Project images
+<p align="center">
+  <img src="images/1.jpg" width="30% margin:5px;" />
+  <img src="images/2.jpg" width="30% margin:5px;" />
+  <img src="images/3.jpg" width="30% margin:5px;" />
+</p>
 
+<p align="center">
+  <img src="images/4.jpg" width="30%" />
+  <img src="images/5.jpg" width="30%" />
+  <img src="images/6.jpg" width="30%" />
+</p>
+
+---
+
+> [!IMPORTANT]
+> When prototyping on a breadboard, use short jumper cables and ensure all connections are secure. Poor-quality wires or loose connections can cause the display to render incorrectly, often showing distorted colors such as green or yellow across the image.
+
+---
  
 *A photo is forever.*
