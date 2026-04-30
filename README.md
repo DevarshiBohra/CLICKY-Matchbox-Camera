@@ -285,7 +285,7 @@ One important thing is that the display has a resolution of 80×160, while the l
  
 ### Taking a photo
  
-Press the button briefly (less than 3 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 5 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
+Press the button briefly (less than 3 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 6 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
  
 ### Grayscale mode
  
