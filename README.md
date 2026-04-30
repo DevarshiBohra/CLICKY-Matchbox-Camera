@@ -5,7 +5,23 @@
 CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a microSD card, shows a live preview on a small TFT screen, and lets you browse, download, or delete your photos from any phone or laptop browser over WiFi — no app, no internet, no cables required. Firmware can be updated over the air too.
  
 ---
- 
+
+# Snaps from the camera
+
+<p align="center">
+  <img src="images/pic40.jpg" width="30% margin:5px;" />
+  <img src="images/pic18.jpg" width="30% margin:5px;" />
+  <img src="images/pic39.jpg" width="30% margin:5px;" />
+</p>
+
+<p align="center">
+  <img src="images/pic52.jpg" width="30%" />
+  <img src="images/pic76.jpg" width="30%" />
+  <img src="images/pic63.jpg" width="30%" />
+</p>
+
+---
+
 ## Table of Contents
  
 - [What it does](#what-it-does)
