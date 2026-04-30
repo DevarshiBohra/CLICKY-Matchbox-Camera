@@ -58,7 +58,6 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 | Photo capture | Full UXGA (1600×1200) JPEG saved to SD card |
 | Grayscale mode | Hardware-level B&W toggle, persists across reboots |
 | WiFi gallery | Browse, download, and delete photos from any browser |
-| Captive portal | Opening any URL on the CLICKY network takes you to the gallery |
 | OTA updates | Push new firmware wirelessly — no USB cable needed after first flash |
 | No internet needed | Everything runs as a self-contained WiFi access point |
  
