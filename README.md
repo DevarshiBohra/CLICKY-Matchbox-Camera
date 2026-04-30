@@ -1,3 +1,5 @@
+The main aim of this repository is to help my friend build this camera.
+
 # CLICKY 📷
  
 > A standalone, wireless point-and-shoot camera — built from scratch on an ESP32-CAM module.
