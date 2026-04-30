@@ -475,7 +475,7 @@ Check the button wiring — one leg to GPIO 3, the other to GND.
 ---
 
 > [!IMPORTANT]
-> When prototyping on a breadboard, use short jumper cables and ensure all connections are secure. Poor-quality wires or loose connections can cause the display to render incorrectly, often showing distorted colors such as green or yellow across the image.
+> When prototyping on a breadboard, use short jumper cables and ensure all connections are secure. Poor-quality wires or loose connections can cause the display to render incorrectly, often showing distorted colors such as green or yellow across the image. Soldering the connections as shown in the above image is recommended.
 
 ---
  
