@@ -459,15 +459,15 @@ Check the button wiring — one leg to GPIO 3, the other to GND.
 
 ## Project images
 <p align="center">
-  <img src="images/1.jpg" width="30% margin:5px;" />
-  <img src="images/2.jpg" width="30% margin:5px;" />
-  <img src="images/3.jpg" width="30% margin:5px;" />
+  <img src="images/1.jpeg" width="30% margin:5px;" />
+  <img src="images/2.jpeg" width="30% margin:5px;" />
+  <img src="images/3.jpeg" width="30% margin:5px;" />
 </p>
 
 <p align="center">
-  <img src="images/4.jpg" width="30%" />
-  <img src="images/5.jpg" width="30%" />
-  <img src="images/6.jpg" width="30%" />
+  <img src="images/4.jpeg" width="30%" />
+  <img src="images/5.jpeg" width="30%" />
+  <img src="images/6.jpeg" width="30%" />
 </p>
 
 ---
