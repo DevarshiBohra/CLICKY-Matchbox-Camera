@@ -397,7 +397,7 @@ Every time you toggle grayscale, the new value is written to EEPROM address 0. E
  
 ## Web gallery features
  
-The gallery page is a self-contained single-page app served directly from the ESP32's flash memory. It requires no internet connection and works on any modern browser including mobile Safari and Chrome.
+The gallery page is a self-contained single-page app served directly from the ESP32's flash memory. It requires no internet connection and works in any modern browser, such as Google Chrome.
  
 Features:
  
