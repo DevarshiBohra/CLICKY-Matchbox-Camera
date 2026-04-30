@@ -281,6 +281,7 @@ The TFT should light up and show a live camera preview.
 ### Live preview
  
 As soon as the board starts, the TFT display shows a live viewfinder from the camera. The preview runs at QQVGA resolution (160×120) to keep it smooth. No button press is needed — it just runs.
+One important thing is that the display has a resolution of 80×160, while the live preview is at QQVGA (120×160). Due to this mismatch, 40 lines of data are not visible in the live preview but are still captured and saved on the SD card. In landscape mode, 20 lines of data from the top and 20 lines from the bottom are removed, and the preview is centred.
  
 ### Taking a photo
  
