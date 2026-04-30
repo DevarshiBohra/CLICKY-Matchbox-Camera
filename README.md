@@ -435,11 +435,11 @@ Check your `User_Setup.h` pin definitions in the TFT_eSPI library. The most comm
  
 **2) Camera FAILED!" on screen at boot**
  
-The camera failed to initialise. This can happen if the board loses power during a previous frame capture. Press the RST button to restart. If it persists, check that the camera ribbon cable on the AI Thinker module is fully seated.
+The camera failed to initialise. This can happen if the board loses power during a previous frame capture. Restart the camera. If it persists, check that the camera ribbon cable on the AI Thinker module is fully seated.
  
 **3) SD card not detected during capture**
  
-Make sure the SD card is FAT32 formatted and is 4 GB or smaller. ExFAT and NTFS are not supported. Try reformatting the card using the official SD Card Formatter tool from sdcard.org.
+Make sure the SD card is FAT32 formatted and is 4 GB or smaller. ExFAT and NTFS are not supported. Try reformatting the SD card.
  
 **4) WiFi network "CLICKY" does not appear**
  
