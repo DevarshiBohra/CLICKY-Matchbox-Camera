@@ -1,4 +1,4 @@
-The main aim of this repository is to help my friend build this camera.
+**The main aim of this repository is to help my friend build this camera.**
 
 # CLICKY 📷
  
