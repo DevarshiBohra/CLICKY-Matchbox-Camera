@@ -108,6 +108,28 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
 | Other leg | GND | Internal pull-up is enabled in code |
  
 > GPIO 3 is the RX0 serial pin, so we cannot use the serial monitor to send commands to the ESP32-CAM. However, we can still receive data from the ESP32-CAM on the serial monitor for debugging
+
+### Power System Wiring
+
+**Battery → Boost/Charger Module**
+
+| Battery | Boost Converter Pin | Notes |
+|---|---|---|
+| Positive (+) | B+ | Battery positive input |
+| Negative (−) | B− | Battery negative input |
+
+**Boost/Charger Module → Switch → ESP32-CAM**
+
+| Boost Converter Pin | Goes to | Notes |
+|---|---|---|
+| GND (output) | ESP32-CAM GND | Direct connection, no switch |
+| 5V (output) | Slide switch — leg 1 | Positive side of the switch |
+| Slide switch — leg 2 | ESP32-CAM 5V | Switch in series on the positive line only |
+
+> **Why only the positive line goes through the switch** — it is standard and safe practice to break only the positive wire. The GND stays permanently connected between the module and ESP32-CAM, which is fine and actually helps avoid floating ground issues.
+
+> **USB port on the boost module** — plug any USB-C (or micro-USB depending on your module) cable into it to charge the battery. You do not need to disconnect anything to charge — the module handles charge and output simultaneously.
+
  
 ### SD Card
  
