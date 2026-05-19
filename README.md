@@ -100,7 +100,7 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
  
 > The pin numbers above must match your `User_Setup.h` file inside the TFT_eSPI library. See the Software Setup section for details.
 
-> GPIO 4 pin on the ESP32-CAM is used to control the onboard flash (LED). That GPIO is needed for this project and for that the transistor powering the LED is removed.
+> GPIO 4 on the ESP32-CAM is connected to the onboard flash LED by default. Since this pin is required for the project, the transistor controlling the onboard LED has been removed to free GPIO 4 for display. Refer to the image below.
 <p align="center">
   <img src="images/ESP32CAM_GPIO4_Transistor.jpg" width="25%"/>
 </p>
