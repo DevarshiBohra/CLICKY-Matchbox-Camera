@@ -99,6 +99,7 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
 | BLK (backlight) | 3.3 V | Tie to 3.3 V for always-on |
  
 > The pin numbers above must match your `User_Setup.h` file inside the TFT_eSPI library. See the Software Setup section for details.
+> GPIO 4 pin on the ESP32-CAM is used to control the onboard flash (LED). We need to use that GPIO for our project and for that the transistor powering that LED is removed.
  
 ### Button
  
