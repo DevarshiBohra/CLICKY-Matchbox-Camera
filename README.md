@@ -36,6 +36,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 - [How to use CLICKY](#how-to-use-clicky)
   - [Live preview](#live-preview)
   - [Taking a photo](#taking-a-photo)
+  - [Recording a video](#recording-a-video)
   - [Grayscale mode](#grayscale-mode)
   - [WiFi gallery mode](#wifi-gallery-mode)
   - [OTA firmware update](#ota-firmware-update)
@@ -56,6 +57,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
 |---|---|
 | Live preview | Real-time viewfinder on a 160×80 TFT display |
 | Photo capture | Full UXGA (1600×1200) JPEG saved to SD card |
+| Video recording | QVGA video clips saved as AVI (Motion-JPEG) to SD card — no live preview while recording |
 | Grayscale mode | Hardware-level B&W toggle, persists across reboots |
 | WiFi gallery | Browse, download, and delete photos from any browser |
 | OTA updates | Push new firmware wirelessly — no USB cable needed after first flash |
@@ -85,7 +87,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
  
 ### ESP32-CAM → TFT Display (ST7735)
  
-The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them. As the SD card and display share the same pins, only one of them can be active at any given point. Due to this, video recording is not feasible, as it requires continuous data storage on the SD card and an active display for real-time preview. Refer to the image below.
+The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them. As the SD card and display share the same pins, only one of them can be active at any given point. Because of this, video recording works but without a live preview — the screen shows a static "● REC" indicator for the whole clip, since the SD card needs exclusive access to those pins to keep up with continuous frame writes. Refer to the image below.
 
 | TFT Pin | ESP32-CAM GPIO | Notes |
 |---|---|---|
@@ -290,7 +292,21 @@ One important thing is that the display has a resolution of 80×160, while the l
  
 ### Taking a photo
  
-Press the button briefly (less than 3 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 6 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
+Press the button briefly (less than 2 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 6 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
+
+### Recording a video
+
+To start recording, quickly double-press the button — release the first press like a normal short press (under 2 seconds), then press it again within half a second, like a rapid double-click. The second press doesn't need to be held for any particular length, it just needs to land in that window.
+
+The screen switches to a red "● REC" indicator along with the current colour/grayscale mode, and there's a short ~2 second pause before recording actually begins — this is when the camera reinitialises for video and the SD card switches into a faster write mode.
+
+**There is no live preview while recording.** The TFT display and SD card share the same SPI pins, and video needs continuous, uninterrupted access to the SD card to keep up with incoming frames in real time, so the display just stays on the static REC screen for the whole clip.
+
+To stop recording, press the button once — a normal short press is enough. There's a brief debounce window right after recording starts, so the press that started the recording can't accidentally be read as the press that stops it.
+
+When you stop, CLICKY finalises the video file (writing the real frame count and size into the file header) and restarts automatically, returning you to the live preview.
+
+Videos are saved to the SD card as `vid1.avi`, `vid2.avi`, and so on, alongside your photos. Recording is at QVGA (320×240), Motion-JPEG compressed, targeting ~20 fps, packaged in a standard AVI container — playable in VLC and most video players.
  
 ### Grayscale mode
  
@@ -298,7 +314,7 @@ CLICKY supports a hardware grayscale mode using the OV2640/OV3660 camera sensor'
  
 **To toggle grayscale on or off:**
  
-Press and hold the button until the progress bar on screen turns blue (between 3 and 5 seconds), then release. The board will restart in the new mode.
+Press and hold the button until the progress bar on screen turns blue (between 2 and 5 seconds), then release. The board will restart in the new mode.
  
 - If you were in colour mode, it switches to grayscale
 - If you were in grayscale, it switches back to colour
@@ -351,8 +367,9 @@ When in WiFi mode, you (and only you, with the password) can push new firmware w
  
 | Press duration | What happens |
 |---|---|
-| 0 – 3 seconds | Short press — takes a photo |
-| 3 – 5 seconds | Toggle press — switches grayscale on or off, then restarts |
+| 0 – 2 seconds | Short press — takes a photo |
+| Quick double-press (two short presses within 0.5s of each other) | Starts video recording — one more press (any length) stops it |
+| 2 – 5 seconds | Toggle press — switches grayscale on or off, then restarts |
 | 5+ seconds | Long press — starts WiFi gallery mode |
  
 ---
@@ -363,30 +380,36 @@ When you press and hold the button, a progress bar appears on the TFT screen. Th
  
 | Bar colour | Time range | Release action |
 |---|---|---|
-| Yellow | 0 – 3 seconds | Capture photo |
-| Blue | 3 – 5 seconds | Toggle grayscale |
+| Yellow | 0 – 2 seconds | Capture photo |
+| Blue | 2 – 5 seconds | Toggle grayscale |
 | Green | 5+ seconds | Start WiFi mode |
  
 The text label above the bar also updates:
  
 - **"Hold for toggle..."** — in the blue zone, release here to toggle grayscale
 - **"Hold for WiFi..."** — in the green zone, release here for WiFi mode
-If you release the button while the bar is still yellow (under 3 seconds), the photo is taken immediately.
+If you release the button while the bar is still yellow (under 2 seconds), the photo is taken immediately.
+
+Video recording isn't tied to how long you hold the button — it's triggered by a quick second press right after you release the first yellow-zone press, so you won't see it represented on the progress bar itself.
  
 ---
  
 ## File naming on the SD card
  
-Photos are saved in the root directory of the SD card as:
+Photos and videos are saved in the root directory of the SD card as:
  
 ```
 pic1.jpg
 pic2.jpg
 pic3.jpg
 ...
+vid1.avi
+vid2.avi
+vid3.avi
+...
 ```
  
-The board scans for the lowest available number each time it captures, so there are no overwrites and no gaps caused by deleted files being reused immediately.
+Photo numbering uses a stored counter so each capture is instant with no scanning, and it normally keeps climbing without reusing numbers from deleted photos — unless the most recently saved photo gets deleted, in which case the counter rolls back automatically. Video numbering works differently: each time you start a recording, the board scans for the lowest free `vid*.avi` name, so deleting an earlier video does free up that number for reuse next time you record.
  
 ---
  
@@ -465,6 +488,14 @@ This can happen if auto-exposure has not had time to adjust when the capture is 
 **8) Button does nothing**
 
 Check the button wiring — one leg to GPIO 3, the other to GND.
+
+**9) Double-press doesn't start a recording**
+
+The second press has to land within half a second of releasing the first one. If you pause too long between the two presses, the board treats them as two separate photo captures instead of a recording trigger.
+
+**10) Recorded video looks stretched or the wrong shape in some players**
+
+CLICKY records frames at QVGA (320×240), but the AVI file header currently advertises a fixed 160×120 frame size. Most modern players (VLC and similar) read the actual JPEG dimensions inside each frame and display the video correctly regardless, but a strict player that trusts the header literally may stretch it. This is a known quirk in the AVI header generation and doesn't affect photos.
  
 ---
  
@@ -476,8 +507,9 @@ Check the button wiring — one leg to GPIO 3, the other to GND.
 | Camera sensor | OV2640/OV3660 |
 | Preview resolution | QQVGA 160×120 RGB565 |
 | Capture resolution | UXGA 1600×1200 JPEG (with PSRAM), SVGA fallback |
+| Video resolution | QVGA 320×240, Motion-JPEG frames in an AVI container, ~20 fps target |
 | Display | 0.96 inch ST7735 160×128 TFT via SPI |
-| Storage | MicroSD via SD_MMC (1-bit mode) |
+| Storage | MicroSD via SD_MMC — 4-bit mode for photo capture and video recording, 1-bit mode for WiFi gallery browsing |
 | WiFi | 802.11 b/g/n, AP mode only |
 | AP IP address | 192.168.4.1 |
 | OTA method | HTTP multipart upload via ESP32 Update library |
