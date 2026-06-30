@@ -296,7 +296,7 @@ Press the button briefly (less than 2 seconds) and release it. The display will 
 
 ### Recording a video
 
-To start recording, quickly double-press the button — release the first press like a normal short press (under 2 seconds), then press it again within half a second, like a rapid double-click. The second press doesn't need to be held for any particular length, it just needs to land in that window.
+To start recording, quickly double-press the button — release the first press like a normal short press, then press it again within half a second, like a rapid double-click.
 
 The screen switches to a red "● REC" indicator along with the current colour/grayscale mode, and there's a short ~2 second pause before recording actually begins — this is when the camera reinitialises for video and the SD card switches into a faster write mode.
 
