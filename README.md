@@ -87,7 +87,7 @@ CLICKY is a DIY digital camera that captures full-resolution JPEG photos to a mi
  
 ### ESP32-CAM → TFT Display (ST7735)
  
-The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them. As the SD card and display share the same pins, only one of them can be active at any given point. Because of this, video recording works but without a live preview — the screen shows a static "● REC" indicator for the whole clip, since the SD card needs exclusive access to those pins to keep up with continuous frame writes. Refer to the image below.
+The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS (chip select) pin is what separates them. As the SD card and display share the same pins, only one of them can be active at any given point. Because of this, video recording works but without a live preview — the screen shows a static "● REC" indicator for the whole clip, since the SD card needs exclusive access to those pins to keep up with continuous frame writes.
 
 | TFT Pin | ESP32-CAM GPIO | Notes |
 |---|---|---|
