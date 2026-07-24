@@ -14,8 +14,8 @@
 #include <EEPROM.h>
 
 // *** OTA credentials
-#define OTA_USERNAME  "niat"
-#define OTA_PASSWORD  "606027"
+#define OTA_USERNAME  "ADD_USERNAME"
+#define OTA_PASSWORD  "ADD_PASSWORD"
 
 // ===================== CAMERA PINS (AI Thinker) =====================
 #define PWDN_GPIO_NUM     32
