@@ -102,10 +102,6 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
  
 > The pin numbers above must match your `User_Setup.h` file inside the TFT_eSPI library. See the Software Setup section for details.
 
-> GPIO 4 is used by the onboard flash LED. Keep the LED transistor in place: CLICKY uses the flash during capture.
-<p align="center">
-  <img src="images/ESP32CAM_GPIO4_Transistor.jpg" width="25%"/>
-</p>
  
 ### Button
  
