@@ -93,7 +93,7 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
 |---|---|---|
 | VCC | 3.3 V | Power |
 | GND | GND | Power |
-| SCL (CLK) | GPIO 4 | SPI clock |
+| SCL (CLK) | GPIO 3 | SPI clock |
 | SDA (MOSI) | GPIO 13 | SPI data |
 | RES (RESET) | GPIO -1 | Display reset |
 | DC (A0) | GPIO 2 | Data/command select |
@@ -102,7 +102,7 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
  
 > The pin numbers above must match your `User_Setup.h` file inside the TFT_eSPI library. See the Software Setup section for details.
 
-> GPIO 4 on the ESP32-CAM is connected to the onboard flash LED by default. Since this pin is required for the project, the transistor controlling the onboard LED has been removed to free GPIO 4 for display. Refer to the image below.
+> GPIO 4 is used by the onboard flash LED. Keep the LED transistor in place: CLICKY uses the flash during capture.
 <p align="center">
   <img src="images/ESP32CAM_GPIO4_Transistor.jpg" width="25%"/>
 </p>
@@ -111,10 +111,14 @@ The TFT uses SPI. The ESP32-CAM shares SPI pins with the SD card slot, so the CS
  
 | Button pin | ESP32-CAM GPIO | Notes |
 |---|---|---|
-| One leg | GPIO 3 (RX0) | Defined as `BUTTON_PIN` in code |
-| Other leg | GND | Internal pull-up is enabled in code |
+| Signal wire | GPIO 33 | Button input (`BUTTON_PIN`); connect button between GPIO 33 and GND |
+| Other button leg | GND | Internal pull-up is enabled in code |
  
-> GPIO 3 is the RX0 serial pin, so we cannot use the serial monitor to send commands to the ESP32-CAM. However, we can still receive data from the ESP32-CAM on the serial monitor for debugging
+> GPIO 33 is also connected to the ESP32-CAM onboard LED circuit. Solder a small wire to the indicated point on the onboard LED and use that wire as the button signal connection. Keep the existing LED circuit intact. Add your close-up soldering photo at `images/gpio33-button-solder-point.jpg` (the image below is a placeholder until you add it).
+
+<p align="center">
+  <img src="images/gpio33-button-solder-point.jpg" width="45%" alt="GPIO 33 button wire solder point on the onboard LED"/>
+</p>
 
 ### Power System Wiring
 
@@ -248,7 +252,7 @@ After installing TFT_eSPI you must edit its configuration file, otherwise the di
    #define TFT_RST  -1  // Reset
    #define TFT_DC   2   // Data/Command
    #define TFT_MOSI 13  // SPI Data
-   #define TFT_SCLK 4  // SPI Clock
+   #define TFT_SCLK 3  // SPI Clock
    ```
 8. Save the file
 ---
@@ -292,7 +296,7 @@ One important thing is that the display has a resolution of 80×160, while the l
  
 ### Taking a photo
  
-Press the button briefly (less than 2 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capturing process takes approximately 6 seconds because the camera deinitialises from the QQVGA (160x120) resolution and reinitialises to UXGA (1600x1200). Photos are saved as `pic1.jpg`, `pic2.jpg`, and so on — the board finds the next available number automatically.
+Press the button briefly (less than 2 seconds) and release it. The display will show "Capturing..." and the board saves a full-resolution JPEG to the SD card, then restarts and returns to the live preview. The capture cycle takes approximately 4 seconds; the firmware overlaps camera preparation with the button double-press window and trims avoidable waits. Photos are saved under `/photos` as `pic1.jpg`, `pic2.jpg`, and so on.
 
 ### Recording a video
 
@@ -306,7 +310,7 @@ To stop recording, press the button once — a normal short press is enough. The
 
 When you stop, CLICKY finalises the video file (writing the real frame count and size into the file header) and restarts automatically, returning you to the live preview.
 
-Videos are saved to the SD card as `vid1.avi`, `vid2.avi`, and so on, alongside your photos. Recording is at QVGA (320×240), Motion-JPEG compressed, targeting ~20 fps, packaged in a standard AVI container — playable in VLC and most video players.
+Videos are saved under `/videos` as `vid1.avi`, `vid2.avi`, and so on. Recording is at QVGA (320×240), Motion-JPEG compressed, targeting ~20 fps, packaged in a standard AVI container — playable in VLC and most video players.
  
 ### Grayscale mode
  
@@ -338,7 +342,7 @@ Press and hold the button for 5 seconds or more (until the progress bar turns gr
 Once in the gallery:
  
 - **View** — all photos load as thumbnails on the page
-- **Download selected** — tick the photos you want and tap "Download selected"
+- **Download selected** — select the photos and videos you want and tap "Download selected"; the device streams them together as one ZIP archive.
 - **Delete selected** — tick photos and tap "Delete selected" to remove them from the SD card
 - **Delete all** — removes every photo from the SD card in one go (asks for confirmation)
 - **Stop WiFi** — exits WiFi mode and restarts the board, returning to camera mode
@@ -396,7 +400,7 @@ Video recording isn't tied to how long you hold the button — it's triggered by
  
 ## File naming on the SD card
  
-Photos and videos are saved in the root directory of the SD card as:
+Photos and videos are stored in separate directories on the SD card:
  
 ```
 pic1.jpg
@@ -419,7 +423,7 @@ The board uses 1 byte of EEPROM to store the active camera effect:
  
 - `0` = normal colour mode
 - `2` = grayscale mode (value `2` matches the OV2640/OV3660 sensor's effect index)
-Every time you toggle grayscale, the new value is written to EEPROM address 0. Every time the board boots, it reads this address and applies the effect before starting the preview. This means your preferred mode is always preserved even if the board loses power.
+The firmware stores grayscale mode and next photo/video counters in Preferences (NVS), so they survive power loss. It imports the older EEPROM effect setting once during migration.
  
 ---
  
@@ -432,7 +436,7 @@ Features:
 - Responsive grid layout — works on phones, tablets, and desktops
 - Lazy loading thumbnails — images load as you scroll
 - Multi-select with checkboxes — tap a photo to select it
-- Batch download — selected photos download one by one
+- Batch download — selected photos and videos stream as one ZIP archive with progress feedback
 - Batch delete — removes selected photos from SD with confirmation
 - Delete all — one-tap wipe with confirmation dialog
 - Toast notifications — brief on-screen feedback for actions
@@ -487,7 +491,7 @@ This can happen if auto-exposure has not had time to adjust when the capture is 
  
 **8) Button does nothing**
 
-Check the button wiring — one leg to GPIO 3, the other to GND.
+Check the button wiring — the signal wire should reach GPIO 33 and the other button leg should connect to GND.
 
 **9) Double-press doesn't start a recording**
 
@@ -513,7 +517,7 @@ CLICKY records frames at QVGA (320×240), but the AVI file header currently adve
 | WiFi | 802.11 b/g/n, AP mode only |
 | AP IP address | 192.168.4.1 |
 | OTA method | HTTP multipart upload via ESP32 Update library |
-| EEPROM usage | 1 byte at address 0 (camera effect index) |
+| Settings and counters | Preferences (NVS); imports legacy effect setting once |
 | Flash size | 4 MB |
 | PSRAM | 4 MB (used for large frame buffers) |
 | Partition scheme | Minimal SPIFFS — two 1.875 MB OTA app slots |
