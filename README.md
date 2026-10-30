@@ -503,7 +503,7 @@ CLICKY records frames at QVGA (320×240), but the AVI file header currently adve
  
 | Property | Value |
 |---|---|
-| Microcontroller | ESP32-S (dual-core 240 MHz) |
+| Microcontroller | ESP32-Cam (dual-core 240 MHz) |
 | Camera sensor | OV2640/OV3660 |
 | Preview resolution | QQVGA 160×120 RGB565 |
 | Capture resolution | UXGA 1600×1200 JPEG (with PSRAM), SVGA fallback |
